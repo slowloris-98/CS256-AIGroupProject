@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "cs256-aihub",
+  "private_key_id": "7c4b8951c0527ddf0d610e798699cfc1851fe07c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDMPkTqdoOE7WJe\nqIp6Nkd5fYNMgis7xBePNGgBBDF5WnM6D1Z7MAbTMX/mipnLFIvWkVtZX3VWeT0p\nRJjyzZ+nud9eT35FUTBxktdZVA7pi8XAgiof7GS3qGC/FBhY/e67sNxixb5ztRDq\nhU4sfpHvLEHXfkc+pCx1XhiQcUsray9ZiGRQxR5slU6eRZj8KVGQ/E1zkddr5JIc\nx66VqWplBTA3oGljjWMhPKvOzPqtIjig2BQa/peDFJQneVk42x3F7Y9p3fuI0C3N\nD78yvVWq8XnSKuUSETBH+caQCWN2DsLYgM1DbsQFOnTSQ0rZbMAAkmSaMiipzjRL\nR50h4LhHAgMBAAECggEAMogjd9jrkDtFL8NGQ5djVqkZj5fTB33sEEe4havaa7pX\nsOEzldXbkmv4R3s6Mrb6JBOhhLqr5sGnQqsQpl3+ZrqDi6tiQ9cjA65/bj/wUpL8\n0bTCpFRR1OipSw03OulUpAZNeHiRNsJxFXz2yuZjx8ds4NqC2Po4b69gp3gIT4zL\nl1Y6qkJj+gSGAjGg74yAtcyn7UoP4tvBCKgYYREnxZgML9W4HF3uweRDSYiE1ymc\nxRoVw7LRofuxvTPQIju2i0NWyVLNbsFF1CqVuDlwpMbYMsncwlWJNX5fvM4a3Q08\nxkWjsLapxLzOzxhxgEYY15sdPPVuLCoBs7mZ2rsqqQKBgQDtbCjD7xnhO8AN7Um7\nPAd+8yLht31xYFqwQo3izENjoq8Dh/qAsNOND4erTc9R2prd3LTxsTVtrV7xlgf5\nIx+XBlLEOY18FWjIQGZg1jdGgPVBCvfzYD4xTU8j4xtkLQeNzcMJc8YbnlJNF70u\n47D0eaPdKybCgHsijLNqAQpVuQKBgQDcOX3wqFIiQd5eu62kDp/zoA/Q5DS27hNK\nMvA6zsglRCKpIbRbLZMExBVW7rUC7G4kQu2C7kW2XrMjECrJy4OTdVyiXYvv2Nk+\nvBtevkxe6FBXqnieB3Sa0UavCPJUFPr1S+CeRNGIu22zOl2ugPouSa58caWeEwdN\nnjlMD4p9/wKBgDu6VPsNoJ4X8PXP9xeCP4SBWAoephEqo0XqSFWA+4cKOysRP0S2\nt1GqUYAX4AsAiqs7xc1zvjQsRFFUZAcZ/e15asLwk5ZesHCIOvkritZSxOArCTuR\nv7OZdkpZ7N8jsN3MoL80/+acyqmYSkCMiUzHeSC/pU2TEucbLFuDjX0JAoGAQNcs\nnY7xn+SE9J+NoKAtuC2Iepi2bKXsSAx3btkzVMWa7vFdiPsCLoUNQ2tFIHc8drC9\n/a7qF6gKVmiMMJ4bP29utt+UNCpEzJPV+y9MjSUZgrZOjTjkvDCh/ydDMj57JX4R\nxIe+qeOFiR/GNXsELlzDYyCTAtfXbqMHe72XqUECgYEAi2RkAdCVReQYav9pXpF1\nF6VUJlnKZkemoN1LYV/ZrcIRADVec1nFhj+d/njqFgtB1onnhAJmCo4ppeegL5KO\nwMPRGeOleRfxji/hfhZNE1y3Gwebe+LFcDZQKySZeVaueTKwDCiBMIQtuiIyMRyK\nOfFBHE4Wn6tyglr3Z+1Ln7U=\n-----END PRIVATE KEY-----\n",
+  "client_email": "atreya-882@cs256-aihub.iam.gserviceaccount.com",
+  "client_id": "101074708964904826540",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/atreya-882%40cs256-aihub.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

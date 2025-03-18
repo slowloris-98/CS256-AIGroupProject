@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 import requests
+import os
+
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "YOUR_GOOGLE_API_KEY")
+CSE_ID = os.environ.get("CSE_ID", "YOUR_CSE_ID")
 
 app = Flask(__name__)
 
@@ -19,28 +23,49 @@ resources = {
     ]
 }
 
+CATEGORY_FILTERS = {
+    "all": "",  # No filter - search the entire web
+    "tutorials": "site:tutorialspoint.com OR site:w3schools.com OR site:freecodecamp.org OR site:realpython.com OR site:geeksforgeeks.org OR site:developer.mozilla.org",
+    "research": "site:ieeexplore.ieee.org OR site:arxiv.org OR site:scholar.google.com OR site:researchgate.net OR site:jstor.org",
+    "github": "site:github.com",
+    "courses": "site:coursera.org OR site:udemy.com OR site:edx.org OR site:futurelearn.com OR site:khanacademy.org",
+    "blogs": "site:medium.com OR site:dev.to OR site:techcrunch.com OR site:towardsdatascience.com OR site:openai.com/blog"
+}
+
+
+def search_google(query, category):
+    # Append site filter to query if one exists for the category.
+    filter_query = CATEGORY_FILTERS.get(category, "")
+    if filter_query:
+        query = f"{query} {filter_query}"
+    
+    url = "https://www.googleapis.com/customsearch/v1"
+    params = {
+        "q": query,
+        "key": GOOGLE_API_KEY,
+        "cx": CSE_ID,
+        "num": 10  # number of results
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    results = []
+    for item in data.get("items", []):
+        results.append({
+            "title": item.get("title"),
+            "url": item.get("link"),
+            "description": item.get("snippet")
+        })
+    return results
+
 @app.route('/')
 def index():
-    query = request.args.get('query', '')
-    category = request.args.get('category', 'all')
-    
+    query = request.args.get("query", "")
+    # Default category set to "tutorials" (adjust as needed)
+    category = request.args.get("category", "all").lower()
     results = []
     if query:
-        if category == 'all':
-            # Search in all categories
-            for resource_type in resources.values():
-                results.extend([item for item in resource_type 
-                              if query.lower() in item['title'].lower() or 
-                                 query.lower() in item['description'].lower()])
-        else:
-            # Search in specific category
-            for resource_type, items in resources.items():
-                if resource_type == category or any(item['category'] == category for item in items):
-                    results.extend([item for item in items 
-                                  if query.lower() in item['title'].lower() or 
-                                     query.lower() in item['description'].lower()])
-    
-    return render_template('index.html', results=results, query=query, category=category)
+        results = search_google(query, category)
+    return render_template("index.html", query=query, category=category, results=results)
 
 
 @app.route('/knowledge-base')

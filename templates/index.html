@@ -5,7 +5,7 @@
 {% block content %}
 <div class="text-center py-6">
     <h1 class="text-3xl font-bold text-gray-800">Welcome to AI Knowledge Hub</h1>
-    <p class="text-lg text-gray-600 mt-2">Your centralized hub for tutorials, research, coding resources, and more.</p>
+    <p class="text-lg text-gray-600 mt-2">Search for AI tutorials, handbooks, documentation, GitHub repositories, and research papers.</p>
 </div>
 
 <section class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto">
@@ -13,15 +13,15 @@
     <form method="get" action="/" class="mt-4 space-y-4">
         <div>
             <label for="query" class="block text-gray-600 font-medium">Search:</label>
-            <input type="text" id="query" name="query" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400" placeholder="Search for tutorials, repositories, papers..." value="{{ query }}">
+            <input type="text" id="query" name="query" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400" placeholder="Enter search term..." value="{{ query }}">
         </div>
         <div>
             <label for="category" class="block text-gray-600 font-medium">Category:</label>
             <select id="category" name="category" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
                 <option value="all" {% if category == 'all' %}selected{% endif %}>All Categories</option>
                 <option value="tutorials" {% if category == 'tutorials' %}selected{% endif %}>Tutorials</option>
-                <option value="github" {% if category == 'github' %}selected{% endif %}>GitHub Repositories</option>
-                <option value="research" {% if category == 'research' %}selected{% endif %}>Research Papers</option>
+                <option value="research" {% if category == 'research' %}selected{% endif %}>Research</option>
+                <option value="github" {% if category == 'github' %}selected{% endif %}>GitHub</option>
                 <option value="courses" {% if category == 'courses' %}selected{% endif %}>Courses</option>
                 <option value="blogs" {% if category == 'blogs' %}selected{% endif %}>Blogs</option>
             </select>
@@ -40,8 +40,7 @@
             {% for result in results %}
                 <li class="bg-white p-4 shadow-lg rounded-lg">
                     <h3 class="text-xl font-semibold text-gray-700">{{ result.title }}</h3>
-                    <p class="text-gray-600"><strong>Category:</strong> {{ result.category }}</p>
-                    <p class="text-gray-500">{{ result.description }}</p>
+                    <p class="text-gray-600">{{ result.description }}</p>
                     <p class="mt-2"><a href="{{ result.url }}" target="_blank" class="text-blue-600 hover:underline">View Resource</a></p>
                 </li>
             {% endfor %}
