@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Contents</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin-bottom: 30px; }
+        h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1>Database Contents</h1>
+    
+    <div class="section">
+        <h2>Courses</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Platform</th>
+                <th>Description</th>
+                <th>Created At</th>
+            </tr>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.title }}</td>
+                <td>{{ course.platform }}</td>
+                <td>{{ course.description }}</td>
+                <td>{{ course.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Handbooks</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Description</th>
+                <th>Created At</th>
+            </tr>
+            {% for handbook in handbooks %}
+            <tr>
+                <td>{{ handbook.title }}</td>
+                <td>{{ handbook.author }}</td>
+                <td>{{ handbook.description }}</td>
+                <td>{{ handbook.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>GitHub Projects</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Stars</th>
+                <th>Description</th>
+                <th>Created At</th>
+            </tr>
+            {% for project in github_projects %}
+            <tr>
+                <td>{{ project.title }}</td>
+                <td>{{ project.stars }}</td>
+                <td>{{ project.description }}</td>
+                <td>{{ project.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Research Papers</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Source</th>
+                <th>Description</th>
+                <th>Created At</th>
+            </tr>
+            {% for paper in research_papers %}
+            <tr>
+                <td>{{ paper.title }}</td>
+                <td>{{ paper.source }}</td>
+                <td>{{ paper.description }}</td>
+                <td>{{ paper.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Blogs</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Platform</th>
+                <th>Description</th>
+                <th>Created At</th>
+            </tr>
+            {% for blog in blogs %}
+            <tr>
+                <td>{{ blog.title }}</td>
+                <td>{{ blog.platform }}</td>
+                <td>{{ blog.description }}</td>
+                <td>{{ blog.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html> 
