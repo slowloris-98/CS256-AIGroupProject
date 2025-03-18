@@ -1,140 +1,104 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
-from werkzeug.security import generate_password_hash, check_password_hash
-import os
-from dotenv import load_dotenv
+from flask import Flask, render_template, request, redirect, url_for
 import requests
-from datetime import datetime
 
-# Load environment variables
-load_dotenv()
-
-# Initialize Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-key-for-now'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ailearninghub.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['GITHUB_TOKEN'] = os.environ.get('GITHUB_TOKEN')
-app.config['GEMINI_API_KEY'] = os.environ.get('GEMINI_API_KEY')
 
-# Initialize extensions
-db = SQLAlchemy(app)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+# Sample data - in a real app, you would connect to APIs or databases
+resources = {
+    "tutorials": [
+        {"title": "Flask Web Development", "url": "#", "category": "Tutorials", "description": "Learn Flask from scratch"},
+        {"title": "Python for Data Science", "url": "#", "category": "Tutorials", "description": "Python basics for DS"}
+    ],
+    "github": [
+        {"title": "Flask-SQLAlchemy", "url": "#", "category": "GitHub", "description": "ORM for Flask"},
+        {"title": "TensorFlow", "url": "#", "category": "GitHub", "description": "Machine learning framework"}
+    ],
+    "research": [
+        {"title": "Deep Learning Advances", "url": "#", "category": "Research", "description": "Latest research in DL"},
+        {"title": "NLP Techniques", "url": "#", "category": "Research", "description": "Natural language processing papers"}
+    ]
+}
 
-# Models
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, default=False)
-    bookmarks = db.relationship('Bookmark', backref='user', lazy='dynamic')
-    
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-        
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-class Resource(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    url = db.Column(db.String(500), nullable=False)
-    resource_type = db.Column(db.String(50), nullable=False)  # Tutorial, Course, Paper, GitHub, Blog
-    category = db.Column(db.String(50))  # ML, NLP, CV, RL, etc.
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    approved = db.Column(db.Boolean, default=False)
-    user_submitted = db.Column(db.Boolean, default=False)
-    submitter_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    
-    submitter = db.relationship('User')
-    bookmarks = db.relationship('Bookmark', backref='resource', lazy='dynamic')
-
-class Bookmark(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    resource_id = db.Column(db.Integer, db.ForeignKey('resource.id'), nullable=False)
-    date_bookmarked = db.Column(db.DateTime, default=datetime.utcnow)
-    notes = db.Column(db.Text)  # User's personal notes about the resource
-
-class GitHubRepo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    github_id = db.Column(db.Integer, unique=True)
-    name = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    url = db.Column(db.String(500), nullable=False)
-    stars = db.Column(db.Integer, default=0)
-    forks = db.Column(db.Integer, default=0)
-    language = db.Column(db.String(50))
-    last_updated = db.Column(db.DateTime)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-# Routes
 @app.route('/')
 def index():
-    # For simplicity, just display a message for now
-    return render_template('index.html')
+    query = request.args.get('query', '')
+    category = request.args.get('category', 'all')
+    
+    results = []
+    if query:
+        if category == 'all':
+            # Search in all categories
+            for resource_type in resources.values():
+                results.extend([item for item in resource_type 
+                              if query.lower() in item['title'].lower() or 
+                                 query.lower() in item['description'].lower()])
+        else:
+            # Search in specific category
+            for resource_type, items in resources.items():
+                if resource_type == category or any(item['category'] == category for item in items):
+                    results.extend([item for item in items 
+                                  if query.lower() in item['title'].lower() or 
+                                     query.lower() in item['description'].lower()])
+    
+    return render_template('index.html', results=results, query=query, category=category)
 
-@app.route('/search')
-def search():
-    # Placeholder function for now
-    return render_template('search_results.html')
 
-@app.route('/categories')
-def categories():
-    # Placeholder function for now
-    return "Categories page"
+@app.route('/knowledge-base')
+def knowledge_base():
+    # Get the active tab from the query parameter, default to 'courses'
+    active_tab = request.args.get('tab', 'courses')
+    
+    # Categories for the knowledge base
+    categories = {
+        "courses": [
+            {"title": "Coursera Machine Learning", "url": "#", "platform": "Coursera"},
+            {"title": "Fast.ai Deep Learning", "url": "#", "platform": "Fast.ai"},
+            {"title": "MIT AI Course", "url": "#", "platform": "MIT OCW"}
+        ],
+        "handbooks": [
+            {"title": "Deep Learning Book", "url": "#", "author": "Ian Goodfellow et al."},
+            {"title": "Stanford CS229 Notes", "url": "#", "author": "Stanford University"}
+        ],
+        "github_projects": [
+            {"title": "Transformers", "url": "#", "stars": 50000, "description": "State-of-the-art NLP"},
+            {"title": "PyTorch", "url": "#", "stars": 45000, "description": "Deep learning framework"}
+        ],
+        "research_papers": [
+            {"title": "Attention Is All You Need", "url": "#", "source": "arXiv"},
+            {"title": "BERT", "url": "#", "source": "Google Research"}
+        ],
+        "blogs": [
+            {"title": "Towards Data Science", "url": "#", "platform": "Medium"},
+            {"title": "OpenAI Blog", "url": "#", "platform": "OpenAI"}
+        ]
+    }
+    
+    return render_template('knowledge_base.html', categories=categories, active_tab=active_tab)
 
-@app.route('/github_explorer')
-def github_explorer():
-    # Placeholder function for now
-    return render_template('github_explorer.html')
+@app.route('/github-trending')
+def github_trending():
+    try:
+        response = requests.get('https://api.github.com/search/repositories', 
+                               params={'q': 'stars:>1000', 'sort': 'stars', 'order': 'desc'})
+        data = response.json()
+        
+        # Extract relevant information
+        repos = []
+        for item in data.get('items', [])[:10]:  # Get top 10 repos
+            repos.append({
+                'name': item['name'],
+                'description': item['description'],
+                'url': item['html_url'],
+                'stars': item['stargazers_count'],
+                'owner': item['owner']['login']
+            })
+        
+        return render_template('github_trending.html', repos=repos)
+    except Exception as e:
+        error_message = str(e)
+        return render_template('github_trending.html', error=error_message)
 
-@app.route('/chatbot')
-def chatbot():
-    # Placeholder function for now
-    return "Chatbot page"
 
-@app.route('/login')
-def login():
-    # Placeholder function for now
-    return "Login page"
 
-@app.route('/register')
-def register():
-    # Placeholder function for now
-    return "Register page"
-
-@app.route('/dashboard')
-def dashboard():
-    # Placeholder function for now
-    return "Dashboard page"
-
-@app.route('/logout')
-def logout():
-    # Placeholder function for now
-    return "Logout page"
-
-@app.route('/submit_resource')
-def submit_resource():
-    # Placeholder function for now
-    return "Submit resource page"
-
-@app.route('/pending_resources')
-def pending_resources():
-    # Placeholder function for now
-    return "Pending resources page"
-
-# Create database tables
-with app.app_context():
-    db.create_all()
-
-# If this file is run directly, start the development server
 if __name__ == '__main__':
     app.run(debug=True)
