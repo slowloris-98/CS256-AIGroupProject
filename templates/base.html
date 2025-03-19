@@ -6,21 +6,11 @@
     <title>{% block title %}AI Knowledge Hub{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .navbar { background-color: #333; padding: 1rem; }
-        .navbar a { color: white; text-decoration: none; margin-right: 1rem; }
-        .navbar a:hover { color: #ddd; }
-        .user-info { float: right; }
-        .user-info a { color: white; }
-        .content { padding: 20px; }
-        .flash-messages { margin-bottom: 20px; }
-        .flash-message { padding: 10px; margin-bottom: 10px; border-radius: 4px; }
-        .flash-message.success { background-color: #dff0d8; color: #3c763d; }
-        .flash-message.error { background-color: #f2dede; color: #a94442; }
+
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-blue-800 text-white shadow-md">
+<body class="bg-gray-950 min-h-screen flex flex-col">
+    <header class="bg-cyan-950 text-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Left side - Logo and main nav -->
@@ -28,7 +18,7 @@
                     <a href="{{ url_for('index') }}" class="text-xl font-bold mr-12">AI Knowledge Hub</a>
                     {% if not request.endpoint in ['login', 'register'] %}
                     <nav class="ml-12">
-                        <ul class="flex space-x-8">
+                        <ul class="flex space-x-8 font-bold">
                             <li><a href="{{ url_for('index') }}" class="hover:text-blue-200 transition-colors">Home</a></li>
                             <li><a href="{{ url_for('knowledge_base') }}" class="hover:text-blue-200 transition-colors">Knowledge Base</a></li>
                             <li><a href="{{ url_for('github_trending') }}" class="hover:text-blue-200 transition-colors">GitHub Trending</a></li>
@@ -61,8 +51,8 @@
                             </div>
                         </div>
                     {% else %}
-                        <a href="{{ url_for('login') }}" class="hover:text-blue-200 transition-colors">Login</a>
-                        <a href="{{ url_for('register') }}" class="hover:text-blue-200 transition-colors">Register</a>
+                        <a href="{{ url_for('login') }}" class="hover:text-blue-200 transition-colors font-bold">Login</a>
+                        <a href="{{ url_for('register') }}" class="hover:text-blue-200 transition-colors font-bold">Register</a>
                     {% endif %}
                 </div>
             </div>

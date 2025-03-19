@@ -3,15 +3,19 @@
 {% block title %}Knowledge Base - AI Knowledge Hub{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-bold mb-8">Knowledge Base</h1>
+<div class="text-center py-6 mb-10">
+
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-200">Knowledge Base</h1>
+        <p class="text-lg text-gray-400 mt-2">AI Resources for you to skill up!</p>
+    </div>
     
     <!-- Tab Navigation -->
     <div class="border-b border-gray-200 mb-8">
         <nav class="-mb-px flex space-x-8">
             {% for tab in ['courses', 'handbooks', 'github_projects', 'research_papers', 'blogs'] %}
             <a href="{{ url_for('knowledge_base', tab=tab) }}" 
-               class="{% if active_tab == tab %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+               class="{% if active_tab == tab %}border-blue-500 text-gray-50{% else %}border-transparent text-gray-400 hover:text-blue-200 hover:border-blue-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">
                 {{ tab.replace('_', ' ').title() }}
             </a>
             {% endfor %}
@@ -19,9 +23,9 @@
     </div>
 
     <!-- Resource List -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="text-left grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for resource in categories[active_tab] %}
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-gray-200 rounded-lg shadow-md p-6">
             <div class="flex justify-between items-start">
                 <div>
                     <h2 class="text-xl font-semibold mb-2">

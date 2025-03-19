@@ -3,20 +3,20 @@
 {% block title %}AI Knowledge Hub - Search{% endblock %}
 
 {% block content %}
-<div class="text-center py-6">
-    <h1 class="text-3xl font-bold text-gray-800">Welcome to AI Knowledge Hub</h1>
-    <p class="text-lg text-gray-600 mt-2">Search for AI tutorials, handbooks, documentation, GitHub repositories, and research papers.</p>
+<div class="text-center py-6 mb-10 mt-8">
+    <h1 class="text-3xl font-bold text-gray-200">Welcome to AI Knowledge Hub!</h1>
+    <p class="text-lg text-gray-400 mt-2">Search for AI tutorials, handbooks, documentation, GitHub repositories, and research papers.</p>
 </div>
 
-<section class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto">
-    <h2 class="text-xl font-semibold text-gray-700">Search Resources</h2>
+<section class="bg-gray-400 shadow-lg rounded-lg p-6 max-w-2xl mx-auto">
+    <h2 class="text-xl font-semibold text-gray-950">Search Resources</h2>
     <form method="get" action="/" class="mt-4 space-y-4">
         <div>
-            <label for="query" class="block text-gray-600 font-medium">Search:</label>
+            
             <input type="text" id="query" name="query" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400" placeholder="Enter search term..." value="{{ query }}">
         </div>
         <div>
-            <label for="category" class="block text-gray-600 font-medium">Category:</label>
+            
             <select id="category" name="category" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
                 <option value="all" {% if category == 'all' %}selected{% endif %}>All Categories</option>
                 <option value="tutorials" {% if category == 'tutorials' %}selected{% endif %}>Tutorials</option>
@@ -34,7 +34,7 @@
 
 {% if query %}
 <section class="mt-8 max-w-3xl mx-auto">
-    <h2 class="text-2xl font-bold text-gray-800">Search Results for "{{ query }}"</h2>
+    <h2 class="text-2xl font-bold text-gray-200">Search Results for "{{ query }}"</h2>
     {% if results %}
         <ul class="mt-4 space-y-4">
             {% for result in results %}

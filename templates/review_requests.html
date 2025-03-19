@@ -4,11 +4,14 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Review Resource Requests</h1>
+    <div class="text-center mb-10 pt-6">
+        <h1 class="text-3xl font-bold text-gray-200">Review Resource Requests</h1>
+        <p class="text-lg text-gray-400 mt-2">Review the resource requests submitted by the users!</p>
+    </div>
 
     {% if requests %}
         {% for request in requests %}
-        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <div class="bg-gray-200 shadow-md rounded-lg p-6 mb-6">
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h2 class="text-xl font-semibold text-gray-800">{{ request.title }}</h2>

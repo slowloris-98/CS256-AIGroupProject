@@ -4,15 +4,19 @@
 
 {% block content %}
 <div class="max-w-2xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Submit New Resource</h1>
     
+    <div class="text-center mb-10 pt-6">
+        <h1 class="text-3xl font-bold text-gray-200">Submit New Resource</h1>
+        <p class="text-lg text-gray-400 mt-2">Request to add a new resource to the knowledge base!</p>
+    </div>
+
     {% if error %}
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
         {{ error }}
     </div>
     {% endif %}
 
-    <form method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form method="POST" class="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="resource_type">
                 Resource Type

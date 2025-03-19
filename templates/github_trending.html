@@ -3,8 +3,9 @@
 {% block title %}Knowledge Hub - GitHub Trending{% endblock %}
 
 {% block content %}
-<div class="text-center py-6">
-    <h1 class="text-3xl font-bold text-gray-800">GitHub Trending Repositories</h1>
+<div class="text-center mb-10 pt-6">
+    <h1 class="text-3xl font-bold text-gray-200">GitHub Trending Repositories</h1>
+    <p class="text-lg text-gray-400 mt-2">Explore exciting AI projects from the GitHub community!</p>
 </div>
 
 <section class="max-w-4xl mx-auto">
@@ -13,7 +14,7 @@
     {% else %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {% for repo in repos %}
-                <div class="bg-white p-4 shadow-lg rounded-lg">
+                <div class="p-4 shadow-lg rounded-lg bg-gray-200">
                     <h3 class="text-xl font-semibold text-gray-700">{{ repo.name }}</h3>
                     <p class="text-gray-600"><strong>Owner:</strong> {{ repo.owner }}</p>
                     <p class="text-gray-500">{{ repo.description }}</p>
