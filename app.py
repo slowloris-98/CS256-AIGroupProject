@@ -6,11 +6,17 @@ from models import db, Course, Handbook, GitHubProject, ResearchPaper, Blog, Use
 from dotenv import load_dotenv
 from functools import wraps
 from datetime import datetime
+import google.generativeai as genai
 
 load_dotenv()
 
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "YOUR_GOOGLE_API_KEY")
 CSE_ID = os.environ.get("CSE_ID", "YOUR_CSE_ID")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY")
+
+# Configure Gemini API
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///knowledge_base.db'
@@ -498,6 +504,41 @@ def view_bookmarks():
     
     print(f"Total resources to display: {len(resources)}")  # Debug log
     return render_template('bookmarks.html', resources=resources)
+
+@app.route('/chat')
+@login_required
+def chat():
+    return render_template('chat.html')
+
+@app.route('/chat/send', methods=['POST'])
+@login_required
+def send_message():
+    try:
+        user_message = request.form.get('message')
+        if not user_message:
+            return {'error': 'No message provided'}, 400
+
+        # Construct a context-aware prompt
+        prompt = f"""You are an AI learning assistant helping users find and understand AI resources. 
+        The user's message is: {user_message}
+        
+        Please provide a helpful response that:
+        1. Directly addresses the user's question
+        2. Suggests relevant AI learning resources when appropriate
+        3. Maintains a friendly and professional tone
+        4. Focuses on AI-related topics and learning
+        5. Provides specific, actionable advice
+        
+        If the user is asking about specific AI topics, include relevant resources from our knowledge base.
+        Keep responses concise but informative."""
+
+        # Generate response using Gemini
+        response = model.generate_content(prompt)
+        return {'response': response.text}
+
+    except Exception as e:
+        print(f"Error in chat: {str(e)}")
+        return {'error': 'Failed to generate response'}, 500
 
 if __name__ == '__main__':
     app.run(debug=True)
