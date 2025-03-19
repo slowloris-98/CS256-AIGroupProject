@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    bookmarks = db.relationship('Bookmark', backref='user', lazy=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -74,4 +75,16 @@ class ResourceRequest(db.Model):
 
     # Relationships
     submitter = db.relationship('User', foreign_keys=[submitted_by])
-    reviewer = db.relationship('User', foreign_keys=[reviewed_by]) 
+    reviewer = db.relationship('User', foreign_keys=[reviewed_by])
+
+class Bookmark(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    resource_type = db.Column(db.String(50), nullable=False)  # 'course', 'handbook', 'github_project', 'research_paper', 'blog'
+    resource_id = db.Column(db.Integer, nullable=False)  # ID of the bookmarked resource
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    # Ensure unique bookmarks per user
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'resource_type', 'resource_id', name='unique_user_resource'),
+    ) 

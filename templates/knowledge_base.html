@@ -1,79 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Knowledge Hub - Knowledge Base{% endblock %}
+{% block title %}Knowledge Base - AI Knowledge Hub{% endblock %}
 
 {% block content %}
-<div class="text-center py-6">
-    <h1 class="text-3xl font-bold text-gray-800">Knowledge Base</h1>
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">Knowledge Base</h1>
+    
+    <!-- Tab Navigation -->
+    <div class="border-b border-gray-200 mb-8">
+        <nav class="-mb-px flex space-x-8">
+            {% for tab in ['courses', 'handbooks', 'github_projects', 'research_papers', 'blogs'] %}
+            <a href="{{ url_for('knowledge_base', tab=tab) }}" 
+               class="{% if active_tab == tab %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                {{ tab.replace('_', ' ').title() }}
+            </a>
+            {% endfor %}
+        </nav>
+    </div>
+
+    <!-- Resource List -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for resource in categories[active_tab] %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">
+                        <a href="{{ resource.url }}" target="_blank" class="text-blue-600 hover:text-blue-800">
+                            {{ resource.title }}
+                        </a>
+                    </h2>
+                    <p class="text-gray-600 mb-4">{{ resource.description }}</p>
+                    {% if resource.platform %}
+                    <p class="text-sm text-gray-500">Platform: {{ resource.platform }}</p>
+                    {% endif %}
+                    {% if resource.author %}
+                    <p class="text-sm text-gray-500">Author: {{ resource.author }}</p>
+                    {% endif %}
+                </div>
+                {% set is_bookmarked = resource.id in bookmarked_ids %}
+                <form action="{{ url_for('add_bookmark' if not is_bookmarked else 'remove_bookmark', resource_type=active_tab, resource_id=resource.id) }}" method="POST">
+                    <button type="submit" class="text-{{ 'blue-600' if is_bookmarked else 'gray-400' }} hover:text-blue-600">
+                        <svg class="w-6 h-6" fill="{{ 'currentColor' if is_bookmarked else 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
-
-<nav class="bg-white shadow-lg p-4 rounded-lg max-w-4xl mx-auto mb-6">
-    <ul class="flex flex-wrap justify-center space-x-4 text-blue-600 font-semibold">
-        <li><a href="{{ url_for('knowledge_base', tab='courses') }}" class="{% if active_tab == 'courses' %}underline{% endif %}">Online Courses</a></li>
-        <li><a href="{{ url_for('knowledge_base', tab='handbooks') }}" class="{% if active_tab == 'handbooks' %}underline{% endif %}">Handbooks & Documentation</a></li>
-        <li><a href="{{ url_for('knowledge_base', tab='github_projects') }}" class="{% if active_tab == 'github_projects' %}underline{% endif %}">Open-source Projects</a></li>
-        <li><a href="{{ url_for('knowledge_base', tab='research_papers') }}" class="{% if active_tab == 'research_papers' %}underline{% endif %}">Research Papers</a></li>
-        <li><a href="{{ url_for('knowledge_base', tab='blogs') }}" class="{% if active_tab == 'blogs' %}underline{% endif %}">Blogs & Communities</a></li>
-    </ul>
-</nav>
-
-<section class="max-w-4xl mx-auto">
-    {% if active_tab == 'courses' %}
-        <h2 class="text-2xl font-semibold text-gray-700">Online Courses</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {% for course in categories.courses %}
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">{{ course.title }}</h3>
-                    <p class="text-gray-600">Platform: {{ course.platform }}</p>
-                    <p class="mt-2"><a href="{{ course.url }}" class="text-blue-600 hover:underline">View Course</a></p>
-                </div>
-            {% endfor %}
-        </div>
-    {% elif active_tab == 'handbooks' %}
-        <h2 class="text-2xl font-semibold text-gray-700">Handbooks & Documentation</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {% for handbook in categories.handbooks %}
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">{{ handbook.title }}</h3>
-                    <p class="text-gray-600">Author: {{ handbook.author }}</p>
-                    <p class="mt-2"><a href="{{ handbook.url }}" class="text-blue-600 hover:underline">View Handbook</a></p>
-                </div>
-            {% endfor %}
-        </div>
-    {% elif active_tab == 'github_projects' %}
-        <h2 class="text-2xl font-semibold text-gray-700">Open-source Projects</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {% for project in categories.github_projects %}
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">{{ project.title }}</h3>
-                    <p class="text-gray-600">⭐ {{ project.stars }}</p>
-                    <p class="text-gray-500">{{ project.description }}</p>
-                    <p class="mt-2"><a href="{{ project.url }}" class="text-blue-600 hover:underline">View Project</a></p>
-                </div>
-            {% endfor %}
-        </div>
-    {% elif active_tab == 'research_papers' %}
-        <h2 class="text-2xl font-semibold text-gray-700">Research Papers</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {% for paper in categories.research_papers %}
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">{{ paper.title }}</h3>
-                    <p class="text-gray-600">Source: {{ paper.source }}</p>
-                    <p class="mt-2"><a href="{{ paper.url }}" class="text-blue-600 hover:underline">View Paper</a></p>
-                </div>
-            {% endfor %}
-        </div>
-    {% elif active_tab == 'blogs' %}
-        <h2 class="text-2xl font-semibold text-gray-700">Blogs & Communities</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {% for blog in categories.blogs %}
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">{{ blog.title }}</h3>
-                    <p class="text-gray-600">Platform: {{ blog.platform }}</p>
-                    <p class="mt-2"><a href="{{ blog.url }}" class="text-blue-600 hover:underline">Visit Blog</a></p>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-</section>
 {% endblock %}

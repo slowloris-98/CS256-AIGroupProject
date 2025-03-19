@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookmarks - AI Knowledge Hub{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">My Bookmarks</h1>
+    
+    {% if resources %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for item in resources %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">
+                        <a href="{{ item.resource.url }}" target="_blank" class="text-blue-600 hover:text-blue-800">
+                            {{ item.resource.title }}
+                        </a>
+                    </h2>
+                    <p class="text-gray-600 mb-4">{{ item.resource.description }}</p>
+                    {% if item.resource.platform %}
+                    <p class="text-sm text-gray-500">Platform: {{ item.resource.platform }}</p>
+                    {% endif %}
+                    {% if item.resource.author %}
+                    <p class="text-sm text-gray-500">Author: {{ item.resource.author }}</p>
+                    {% endif %}
+                    <p class="text-sm text-gray-500 mt-2">Bookmarked on: {{ item.created_at.strftime('%Y-%m-%d') }}</p>
+                </div>
+                <form action="{{ url_for('remove_bookmark', resource_type=item.type, resource_id=item.resource.id) }}" method="POST">
+                    <button type="submit" class="text-red-400 hover:text-red-600">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+        <p class="text-gray-600 text-lg">You haven't bookmarked any resources yet.</p>
+        <a href="{{ url_for('knowledge_base') }}" class="text-blue-600 hover:text-blue-800 mt-4 inline-block">Browse Resources</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %} - AI Knowledge Base</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>{% block title %}AI Knowledge Hub{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
         .navbar { background-color: #333; padding: 1rem; }
@@ -26,22 +26,35 @@
                 <h1 class="text-2xl font-bold">AI Knowledge Hub</h1>
                 <nav>
                     <ul class="flex space-x-6">
+                        {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('index') }}" class="hover:text-blue-200 transition-colors">Home</a></li>
                         <li><a href="{{ url_for('knowledge_base') }}" class="hover:text-blue-200 transition-colors">Knowledge Base</a></li>
                         <li><a href="{{ url_for('github_trending') }}" class="hover:text-blue-200 transition-colors">GitHub Trending</a></li>
-                        <li><a href="{{ url_for('submit_resource') }}" class="hover:text-blue-200 transition-colors">Submit Resource</a></li>
-                        {% if current_user.is_admin %}
-                        <li><a href="{{ url_for('review_requests') }}" class="hover:text-blue-200 transition-colors">Review Requests</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('login') }}" class="hover:text-blue-200 transition-colors">Login</a></li>
+                        <li><a href="{{ url_for('register') }}" class="hover:text-blue-200 transition-colors">Register</a></li>
                         {% endif %}
                     </ul>
                 </nav>
-                <div class="user-info">
-                    {% if session.get('user_id') %}
-                        Welcome, {{ session.get('username') }}! 
-                        <a href="{{ url_for('logout') }}" class="hover:text-blue-200 transition-colors">Logout</a>
-                    {% else %}
-                        <a href="{{ url_for('login') }}" class="hover:text-blue-200 transition-colors">Login</a>
-                        <a href="{{ url_for('register') }}" class="hover:text-blue-200 transition-colors">Register</a>
+                <div class="relative">
+                    {% if current_user.is_authenticated %}
+                        <button id="userMenuButton" class="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+                            <span>Welcome, {{ current_user.username }}!</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
+                            {% if current_user.is_admin %}
+                            <a href="{{ url_for('review_requests') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Review Requests</a>
+                            <a href="{{ url_for('db_view') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Database View</a>
+                            {% else %}
+                            <a href="{{ url_for('submit_resource') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Submit Resource</a>
+                            {% endif %}
+                            <a href="{{ url_for('view_bookmarks') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">My Bookmarks</a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -51,9 +64,20 @@
     <main class="container mx-auto px-4 py-8 flex-grow">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="flash-messages">
+                <div class="space-y-4 mb-8">
                     {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
+                        <div class="p-4 rounded-lg shadow-md flex items-center {% if category == 'error' %}bg-red-50 border-l-4 border-red-500 text-red-700{% else %}bg-green-50 border-l-4 border-green-500 text-green-700{% endif %}">
+                            {% if category == 'error' %}
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                            {% else %}
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            {% endif %}
+                            <p class="font-medium">{{ message }}</p>
+                        </div>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -67,5 +91,25 @@
             <p>&copy; 2025 AI Knowledge Hub</p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userMenu = document.getElementById('userMenu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

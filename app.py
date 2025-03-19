@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, current_user, login_user, logout_user
 import requests
 import os
-from models import db, Course, Handbook, GitHubProject, ResearchPaper, Blog, User, ResourceRequest
+from models import db, Course, Handbook, GitHubProject, ResearchPaper, Blog, User, ResourceRequest, Bookmark
 from dotenv import load_dotenv
 from functools import wraps
 from datetime import datetime
@@ -267,7 +267,17 @@ def knowledge_base():
         "blogs": Blog.query.all()
     }
     
-    return render_template('knowledge_base.html', categories=categories, active_tab=active_tab)
+    # Get bookmarked resource IDs for the current user, filtered by resource type
+    bookmarks = Bookmark.query.filter_by(
+        user_id=current_user.id,
+        resource_type=active_tab
+    ).all()
+    bookmarked_ids = [bookmark.resource_id for bookmark in bookmarks]
+    
+    return render_template('knowledge_base.html', 
+                         categories=categories, 
+                         active_tab=active_tab,
+                         bookmarked_ids=bookmarked_ids)
 
 @app.route('/github-trending')
 @login_required
@@ -401,6 +411,89 @@ def review_request(request_id):
     db.session.commit()
 
     return redirect(url_for('review_requests'))
+
+@app.route('/bookmark/<resource_type>/<int:resource_id>', methods=['POST'])
+@login_required
+def add_bookmark(resource_type, resource_id):
+    try:
+        # Check if bookmark already exists
+        existing_bookmark = Bookmark.query.filter_by(
+            user_id=current_user.id,
+            resource_type=resource_type,
+            resource_id=resource_id
+        ).first()
+        
+        if existing_bookmark:
+            flash('This resource is already bookmarked.', 'error')
+            return redirect(request.referrer or url_for('index'))
+        
+        bookmark = Bookmark(
+            user_id=current_user.id,
+            resource_type=resource_type,
+            resource_id=resource_id
+        )
+        db.session.add(bookmark)
+        db.session.commit()
+        flash('Resource bookmarked successfully!', 'success')
+        print(f"Added bookmark: type={resource_type}, id={resource_id}")  # Debug log
+    except Exception as e:
+        db.session.rollback()
+        flash('Error bookmarking resource.', 'error')
+        print(f"Error adding bookmark: {str(e)}")  # Debug log
+    return redirect(request.referrer or url_for('index'))
+
+@app.route('/remove-bookmark/<resource_type>/<int:resource_id>', methods=['POST'])
+@login_required
+def remove_bookmark(resource_type, resource_id):
+    bookmark = Bookmark.query.filter_by(
+        user_id=current_user.id,
+        resource_type=resource_type,
+        resource_id=resource_id
+    ).first()
+    if bookmark:
+        db.session.delete(bookmark)
+        db.session.commit()
+        flash('Bookmark removed successfully!', 'success')
+    return redirect(request.referrer or url_for('index'))
+
+@app.route('/bookmarks')
+@login_required
+def view_bookmarks():
+    # Get all bookmarks for the current user
+    bookmarks = Bookmark.query.filter_by(user_id=current_user.id).order_by(Bookmark.created_at.desc()).all()
+    print(f"Found {len(bookmarks)} bookmarks for user {current_user.id}")  # Debug log
+    
+    # Get the actual resources for each bookmark
+    resources = []
+    for bookmark in bookmarks:
+        resource = None
+        try:
+            if bookmark.resource_type == 'courses':
+                resource = Course.query.get(bookmark.resource_id)
+            elif bookmark.resource_type == 'handbooks':
+                resource = Handbook.query.get(bookmark.resource_id)
+            elif bookmark.resource_type == 'github_projects':
+                resource = GitHubProject.query.get(bookmark.resource_id)
+            elif bookmark.resource_type == 'research_papers':
+                resource = ResearchPaper.query.get(bookmark.resource_id)
+            elif bookmark.resource_type == 'blogs':
+                resource = Blog.query.get(bookmark.resource_id)
+            
+            if resource:
+                resources.append({
+                    'type': bookmark.resource_type,
+                    'resource': resource,
+                    'bookmark_id': bookmark.id,
+                    'created_at': bookmark.created_at
+                })
+                print(f"Added resource: {resource.title} of type {bookmark.resource_type}")  # Debug log
+            else:
+                print(f"Resource not found for bookmark {bookmark.id} of type {bookmark.resource_type}")  # Debug log
+        except Exception as e:
+            print(f"Error processing bookmark {bookmark.id}: {str(e)}")  # Debug log
+    
+    print(f"Total resources to display: {len(resources)}")  # Debug log
+    return render_template('bookmarks.html', resources=resources)
 
 if __name__ == '__main__':
     app.run(debug=True)
