@@ -26,9 +26,13 @@
                 <h1 class="text-2xl font-bold">AI Knowledge Hub</h1>
                 <nav>
                     <ul class="flex space-x-6">
-                        <li><a href="/" class="hover:text-blue-200 transition-colors {% if request.path == '/' %}font-bold underline{% endif %}">Home</a></li>
-                        <li><a href="/knowledge-base" class="hover:text-blue-200 transition-colors {% if request.path == '/knowledge-base' %}font-bold underline{% endif %}">Knowledge Base</a></li>
-                        <li><a href="/github-trending" class="hover:text-blue-200 transition-colors {% if request.path == '/github-trending' %}font-bold underline{% endif %}">GitHub Trending</a></li>
+                        <li><a href="{{ url_for('index') }}" class="hover:text-blue-200 transition-colors">Home</a></li>
+                        <li><a href="{{ url_for('knowledge_base') }}" class="hover:text-blue-200 transition-colors">Knowledge Base</a></li>
+                        <li><a href="{{ url_for('github_trending') }}" class="hover:text-blue-200 transition-colors">GitHub Trending</a></li>
+                        <li><a href="{{ url_for('submit_resource') }}" class="hover:text-blue-200 transition-colors">Submit Resource</a></li>
+                        {% if current_user.is_admin %}
+                        <li><a href="{{ url_for('review_requests') }}" class="hover:text-blue-200 transition-colors">Review Requests</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
                 <div class="user-info">

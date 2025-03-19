@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_login import LoginManager, current_user, login_user, logout_user
 import requests
 import os
-from models import db, Course, Handbook, GitHubProject, ResearchPaper, Blog, User
+from models import db, Course, Handbook, GitHubProject, ResearchPaper, Blog, User, ResourceRequest
 from dotenv import load_dotenv
 from functools import wraps
+from datetime import datetime
 
 load_dotenv()
 
@@ -18,6 +20,15 @@ app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')  # Require
 # Initialize the database
 db.init_app(app)
 
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 # Login required decorator
 def login_required(f):
     @wraps(f)
@@ -27,47 +38,100 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Admin required decorator
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        user = User.query.get(session['user_id'])
+        if not user or not user.is_admin:
+            flash('You need admin privileges to access this page.')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # Create database tables
 with app.app_context():
     db.create_all()
+    # Create admin user if none exists
+    if not User.query.filter_by(is_admin=True).first():
+        admin = User(username='admin', email='admin@example.com', is_admin=True)
+        admin.set_password('admin123')  # Change this in production!
+        db.session.add(admin)
+        db.session.commit()
+    
     # Add some sample data if the database is empty
     if not Course.query.first():
         sample_courses = [
-            Course(title="Coursera Machine Learning", url="#", platform="Coursera", description="Stanford's Machine Learning course"),
-            Course(title="Fast.ai Deep Learning", url="#", platform="Fast.ai", description="Practical deep learning course"),
-            Course(title="MIT AI Course", url="#", platform="MIT OCW", description="MIT's Introduction to AI")
+            Course(title="Coursera Machine Learning", 
+                  url="https://www.coursera.org/learn/machine-learning", 
+                  platform="Coursera", 
+                  description="Stanford's Machine Learning course by Andrew Ng"),
+            Course(title="Fast.ai Deep Learning", 
+                  url="https://course.fast.ai/", 
+                  platform="Fast.ai", 
+                  description="Practical Deep Learning for Coders"),
+            Course(title="MIT Introduction to Deep Learning", 
+                  url="http://introtodeeplearning.com/", 
+                  platform="MIT OCW", 
+                  description="MIT's introductory course to deep learning methods") 
         ]
         db.session.add_all(sample_courses)
         db.session.commit()
 
     if not Handbook.query.first():
         sample_handbooks = [
-            Handbook(title="Deep Learning Book", url="#", author="Ian Goodfellow et al.", description="Comprehensive guide to deep learning"),
-            Handbook(title="Stanford CS229 Notes", url="#", author="Stanford University", description="Machine learning course notes")
+            Handbook(title="Deep Learning Book", 
+                    url="https://www.deeplearningbook.org/", 
+                    author="Ian Goodfellow et al.", 
+                    description="Comprehensive guide to deep learning fundamentals"),
+            Handbook(title="Stanford CS229 Notes", 
+                    url="https://cs229.stanford.edu/notes2022fall/main_notes.pdf", 
+                    author="Stanford University", 
+                    description="Stanford's machine learning course notes")
         ]
         db.session.add_all(sample_handbooks)
         db.session.commit()
 
     if not GitHubProject.query.first():
         sample_projects = [
-            GitHubProject(title="Transformers", url="#", stars=50000, description="State-of-the-art NLP"),
-            GitHubProject(title="PyTorch", url="#", stars=45000, description="Deep learning framework")
+            GitHubProject(title="Transformers", 
+                         url="https://github.com/huggingface/transformers", 
+                         stars=50000, 
+                         description="State-of-the-art Natural Language Processing by Hugging Face"),
+            GitHubProject(title="PyTorch", 
+                         url="https://github.com/pytorch/pytorch", 
+                         stars=45000, 
+                         description="Open source machine learning framework")
         ]
         db.session.add_all(sample_projects)
         db.session.commit()
 
     if not ResearchPaper.query.first():
         sample_papers = [
-            ResearchPaper(title="Attention Is All You Need", url="#", source="arXiv", description="Transformer architecture paper"),
-            ResearchPaper(title="BERT", url="#", source="Google Research", description="Bidirectional Encoder Representations from Transformers")
+            ResearchPaper(title="Attention Is All You Need", 
+                         url="https://arxiv.org/abs/1706.03762", 
+                         source="arXiv", 
+                         description="Original transformer architecture paper that revolutionized NLP"),
+            ResearchPaper(title="BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding", 
+                         url="https://arxiv.org/abs/1810.04805", 
+                         source="Google Research", 
+                         description="Breakthrough paper introducing BERT model")
         ]
         db.session.add_all(sample_papers)
         db.session.commit()
 
     if not Blog.query.first():
         sample_blogs = [
-            Blog(title="Towards Data Science", url="#", platform="Medium", description="Data science articles and tutorials"),
-            Blog(title="OpenAI Blog", url="#", platform="OpenAI", description="Latest AI research and developments")
+            Blog(title="Towards Data Science", 
+                 url="https://towardsdatascience.com/", 
+                 platform="Medium", 
+                 description="Community of data science enthusiasts sharing insights and tutorials"),
+            Blog(title="OpenAI Blog", 
+                 url="https://openai.com/blog", 
+                 platform="OpenAI", 
+                 description="Latest research and developments from OpenAI")
         ]
         db.session.add_all(sample_blogs)
         db.session.commit()
@@ -159,6 +223,7 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
+            login_user(user)
             session['user_id'] = user.id
             session['username'] = user.username
             flash('Login successful!')
@@ -170,6 +235,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    logout_user()
     session.clear()
     flash('You have been logged out.')
     return redirect(url_for('index'))
@@ -227,15 +293,114 @@ def github_trending():
         error_message = str(e)
         return render_template('github_trending.html', error=error_message)
 
-@app.route('/db-view')
+@app.route('/db_view')
 @login_required
 def db_view():
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('index'))
+    
+    # Get all resources
+    courses = Course.query.all()
+    handbooks = Handbook.query.all()
+    github_projects = GitHubProject.query.all()
+    research_papers = ResearchPaper.query.all()
+    blogs = Blog.query.all()
+    users = User.query.all()  # Add this line to get all users
+    
     return render_template('db_view.html',
-                         courses=Course.query.all(),
-                         handbooks=Handbook.query.all(),
-                         github_projects=GitHubProject.query.all(),
-                         research_papers=ResearchPaper.query.all(),
-                         blogs=Blog.query.all())
+                         courses=courses,
+                         handbooks=handbooks,
+                         github_projects=github_projects,
+                         research_papers=research_papers,
+                         blogs=blogs,
+                         users=users)  # Add users to the template context
+
+@app.route('/submit_resource', methods=['GET', 'POST'])
+@login_required
+def submit_resource():
+    if request.method == 'POST':
+        title = request.form['title']
+        url = request.form['url']
+        description = request.form['description']
+        resource_type = request.form['resource_type']
+
+        # Create new resource request
+        resource_request  = ResourceRequest(
+            title=title,
+            url=url,
+            description=description,
+            resource_type=resource_type,
+            submitted_by=session['user_id']
+        )
+        db.session.add(resource_request)
+        db.session.commit()
+
+        flash('Resource submitted successfully! Waiting for admin approval.')
+        return redirect(url_for('knowledge_base'))
+
+    return render_template('submit_resource.html')
+
+@app.route('/review-requests')
+@admin_required
+def review_requests():
+    requests = ResourceRequest.query.order_by(ResourceRequest.submitted_at.desc()).all()
+    return render_template('review_requests.html', requests=requests)
+
+@app.route('/review-request/<int:request_id>', methods=['POST'])
+@admin_required
+def review_request(request_id):
+    resource_request = ResourceRequest.query.get_or_404(request_id)
+    action = request.form.get('action')
+    review_notes = request.form.get('review_notes')
+
+    if action == 'approve':
+        # Create the appropriate resource based on type
+        if resource_request.resource_type == 'course':
+            resource = Course(
+                title=resource_request.title,
+                url=resource_request.url,
+                description=resource_request.description
+            )
+        elif resource_request.resource_type == 'handbook':
+            resource = Handbook(
+                title=resource_request.title,
+                url=resource_request.url,
+                description=resource_request.description
+            )
+        elif resource_request.resource_type == 'github_project':
+            resource = GitHubProject(
+                title=resource_request.title,
+                url=resource_request.url,
+                description=resource_request.description
+            )
+        elif resource_request.resource_type == 'research_paper':
+            resource = ResearchPaper(
+                title=resource_request.title,
+                url=resource_request.url,
+                description=resource_request.description
+            )
+        elif resource_request.resource_type == 'blog':
+            resource = Blog(
+                title=resource_request.title,
+                url=resource_request.url,
+                description=resource_request.description
+            )
+        
+        db.session.add(resource)
+        resource_request.status = 'approved'
+        flash('Resource approved and added to knowledge base!')
+    
+    elif action == 'reject':
+        resource_request.status = 'rejected'
+        flash('Resource request rejected.')
+    
+    resource_request.reviewed_by = session['user_id']
+    resource_request.reviewed_at = datetime.utcnow()
+    resource_request.review_notes = review_notes
+    db.session.commit()
+
+    return redirect(url_for('review_requests'))
 
 if __name__ == '__main__':
     app.run(debug=True)

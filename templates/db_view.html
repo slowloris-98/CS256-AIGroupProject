@@ -1,118 +1,185 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Database Contents</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .section { margin-bottom: 30px; }
-        h2 { color: #333; }
-        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-    </style>
-</head>
-<body>
-    <h1>Database Contents</h1>
+{% extends "base.html" %}
+
+{% block title %}Database Contents{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Database Contents</h1>
     
-    <div class="section">
-        <h2>Courses</h2>
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Platform</th>
-                <th>Description</th>
-                <th>Created At</th>
-            </tr>
-            {% for course in courses %}
-            <tr>
-                <td>{{ course.title }}</td>
-                <td>{{ course.platform }}</td>
-                <td>{{ course.description }}</td>
-                <td>{{ course.created_at }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="section mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Users</h2>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Is Admin</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for user in users %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.username }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.is_admin }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>Handbooks</h2>
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Description</th>
-                <th>Created At</th>
-            </tr>
-            {% for handbook in handbooks %}
-            <tr>
-                <td>{{ handbook.title }}</td>
-                <td>{{ handbook.author }}</td>
-                <td>{{ handbook.description }}</td>
-                <td>{{ handbook.created_at }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="section mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Courses</h2>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for course in courses %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ course.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ course.platform }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ course.description }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <a href="{{ course.url }}" class="text-blue-600 hover:text-blue-900" target="_blank">View Course</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ course.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>GitHub Projects</h2>
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Stars</th>
-                <th>Description</th>
-                <th>Created At</th>
-            </tr>
-            {% for project in github_projects %}
-            <tr>
-                <td>{{ project.title }}</td>
-                <td>{{ project.stars }}</td>
-                <td>{{ project.description }}</td>
-                <td>{{ project.created_at }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="section mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Handbooks</h2>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for handbook in handbooks %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ handbook.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ handbook.author }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ handbook.description }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <a href="{{ handbook.url }}" class="text-blue-600 hover:text-blue-900" target="_blank">View Handbook</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ handbook.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>Research Papers</h2>
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Source</th>
-                <th>Description</th>
-                <th>Created At</th>
-            </tr>
-            {% for paper in research_papers %}
-            <tr>
-                <td>{{ paper.title }}</td>
-                <td>{{ paper.source }}</td>
-                <td>{{ paper.description }}</td>
-                <td>{{ paper.created_at }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="section mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">GitHub Projects</h2>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stars</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for project in github_projects %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ project.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ project.stars }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ project.description }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <a href="{{ project.url }}" class="text-blue-600 hover:text-blue-900" target="_blank">View Project</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ project.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>Blogs</h2>
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Platform</th>
-                <th>Description</th>
-                <th>Created At</th>
-            </tr>
-            {% for blog in blogs %}
-            <tr>
-                <td>{{ blog.title }}</td>
-                <td>{{ blog.platform }}</td>
-                <td>{{ blog.description }}</td>
-                <td>{{ blog.created_at }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="section mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Research Papers</h2>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for paper in research_papers %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ paper.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ paper.source }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ paper.description }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <a href="{{ paper.url }}" class="text-blue-600 hover:text-blue-900" target="_blank">View Paper</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ paper.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</body>
-</html> 
+
+    <div class="section mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Blogs</h2>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for blog in blogs %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ blog.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ blog.platform }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ blog.description }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <a href="{{ blog.url }}" class="text-blue-600 hover:text-blue-900" target="_blank">View Blog</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ blog.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

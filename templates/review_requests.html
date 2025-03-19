@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Review Resource Requests{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Review Resource Requests</h1>
+
+    {% if requests %}
+        {% for request in requests %}
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800">{{ request.title }}</h2>
+                    <p class="text-sm text-gray-600">Submitted by {{ request.submitter.username }} on {{ request.submitted_at.strftime('%Y-%m-%d') }}</p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-sm 
+                    {% if request.status == 'pending' %}bg-yellow-100 text-yellow-800
+                    {% elif request.status == 'approved' %}bg-green-100 text-green-800
+                    {% else %}bg-red-100 text-red-800{% endif %}">
+                    {{ request.status.title() }}
+                </span>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-gray-600"><strong>Type:</strong> {{ request.resource_type.replace('_', ' ').title() }}</p>
+                <p class="text-gray-600"><strong>URL:</strong> <a href="{{ request.url }}" class="text-blue-600 hover:underline" target="_blank">{{ request.url }}</a></p>
+                <p class="text-gray-600"><strong>Description:</strong> {{ request.description }}</p>
+            </div>
+
+            {% if request.status == 'pending' %}
+            <form method="POST" action="{{ url_for('review_request', request_id=request.id) }}" class="flex gap-4">
+                <div class="flex-grow">
+                    <textarea name="review_notes" placeholder="Add review notes (optional)"
+                              class="w-full p-2 border rounded"></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" name="action" value="approve"
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        Approve
+                    </button>
+                    <button type="submit" name="action" value="reject"
+                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        Reject
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <div class="bg-gray-50 p-4 rounded">
+                <p class="text-sm text-gray-600">
+                    <strong>Reviewed by:</strong> {{ request.reviewer.username }}<br>
+                    <strong>Review date:</strong> {{ request.reviewed_at.strftime('%Y-%m-%d') }}<br>
+                    {% if request.review_notes %}
+                    <strong>Notes:</strong> {{ request.review_notes }}
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="bg-white shadow-md rounded-lg p-6 text-center">
+            <p class="text-gray-600">No resource requests to review.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 
