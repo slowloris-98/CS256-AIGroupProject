@@ -316,7 +316,9 @@ def db_view():
     github_projects = GitHubProject.query.all()
     research_papers = ResearchPaper.query.all()
     blogs = Blog.query.all()
-    users = User.query.all()  # Add this line to get all users
+    users = User.query.all()
+    resource_requests = ResourceRequest.query.all()
+    bookmarks = Bookmark.query.all()
     
     return render_template('db_view.html',
                          courses=courses,
@@ -324,7 +326,9 @@ def db_view():
                          github_projects=github_projects,
                          research_papers=research_papers,
                          blogs=blogs,
-                         users=users)  # Add users to the template context
+                         users=users,
+                         resource_requests=resource_requests,
+                         bookmarks=bookmarks)
 
 @app.route('/submit_resource', methods=['GET', 'POST'])
 @login_required
