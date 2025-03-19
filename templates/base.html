@@ -25,10 +25,10 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Left side - Logo and main nav -->
                 <div class="flex items-center">
-                    <a href="{{ url_for('index') }}" class="text-xl font-bold">AI Knowledge Hub</a>
+                    <a href="{{ url_for('index') }}" class="text-xl font-bold mr-12">AI Knowledge Hub</a>
                     {% if not request.endpoint in ['login', 'register'] %}
-                    <nav class="ml-8">
-                        <ul class="flex space-x-4">
+                    <nav class="ml-12">
+                        <ul class="flex space-x-8">
                             <li><a href="{{ url_for('index') }}" class="hover:text-blue-200 transition-colors">Home</a></li>
                             <li><a href="{{ url_for('knowledge_base') }}" class="hover:text-blue-200 transition-colors">Knowledge Base</a></li>
                             <li><a href="{{ url_for('github_trending') }}" class="hover:text-blue-200 transition-colors">GitHub Trending</a></li>
