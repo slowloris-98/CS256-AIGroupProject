@@ -20,42 +20,49 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-blue-600 text-white shadow-md">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold">AI Knowledge Hub</h1>
-                <nav>
-                    <ul class="flex space-x-6">
-                        {% if current_user.is_authenticated %}
-                        <li><a href="{{ url_for('index') }}" class="hover:text-blue-200 transition-colors">Home</a></li>
-                        <li><a href="{{ url_for('knowledge_base') }}" class="hover:text-blue-200 transition-colors">Knowledge Base</a></li>
-                        <li><a href="{{ url_for('github_trending') }}" class="hover:text-blue-200 transition-colors">GitHub Trending</a></li>
-                        <li><a href="{{ url_for('chat') }}" class="hover:text-blue-200 transition-colors">AI Assistant</a></li>
-                        {% else %}
-                        <li><a href="{{ url_for('login') }}" class="hover:text-blue-200 transition-colors">Login</a></li>
-                        <li><a href="{{ url_for('register') }}" class="hover:text-blue-200 transition-colors">Register</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                <div class="relative">
+    <header class="bg-blue-800 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Left side - Logo and main nav -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="text-xl font-bold">AI Knowledge Hub</a>
+                    {% if not request.endpoint in ['login', 'register'] %}
+                    <nav class="ml-8">
+                        <ul class="flex space-x-4">
+                            <li><a href="{{ url_for('index') }}" class="hover:text-blue-200 transition-colors">Home</a></li>
+                            <li><a href="{{ url_for('knowledge_base') }}" class="hover:text-blue-200 transition-colors">Knowledge Base</a></li>
+                            <li><a href="{{ url_for('github_trending') }}" class="hover:text-blue-200 transition-colors">GitHub Trending</a></li>
+                            <li><a href="{{ url_for('chat') }}" class="hover:text-blue-200 transition-colors">AI Assistant</a></li>
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+
+                <!-- Right side - Auth buttons -->
+                <div class="flex items-center space-x-4">
                     {% if current_user.is_authenticated %}
-                        <button id="userMenuButton" class="flex items-center space-x-2 hover:text-blue-200 transition-colors">
-                            <span>Welcome, {{ current_user.username }}!</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
-                            {% if current_user.is_admin %}
-                            <a href="{{ url_for('review_requests') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Review Requests</a>
-                            <a href="{{ url_for('db_view') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Database View</a>
-                            {% else %}
-                            <a href="{{ url_for('submit_resource') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Submit Resource</a>
-                            {% endif %}
-                            <a href="{{ url_for('view_bookmarks') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">My Bookmarks</a>
-                            <div class="border-t border-gray-100 my-1"></div>
-                            <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+                                <span>Welcome, {{ current_user.username }}!</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
+                                {% if current_user.is_admin %}
+                                <a href="{{ url_for('review_requests') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Review Requests</a>
+                                <a href="{{ url_for('db_view') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Database View</a>
+                                {% else %}
+                                <a href="{{ url_for('submit_resource') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Submit Resource</a>
+                                {% endif %}
+                                <a href="{{ url_for('view_bookmarks') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">My Bookmarks</a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                            </div>
                         </div>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="hover:text-blue-200 transition-colors">Login</a>
+                        <a href="{{ url_for('register') }}" class="hover:text-blue-200 transition-colors">Register</a>
                     {% endif %}
                 </div>
             </div>

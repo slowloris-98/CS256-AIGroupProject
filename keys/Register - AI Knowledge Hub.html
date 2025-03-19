@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AI Knowledge Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .navbar { background-color: #333; padding: 1rem; }
+        .navbar a { color: white; text-decoration: none; margin-right: 1rem; }
+        .navbar a:hover { color: #ddd; }
+        .user-info { float: right; }
+        .user-info a { color: white; }
+        .content { padding: 20px; }
+        .flash-messages { margin-bottom: 20px; }
+        .flash-message { padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .flash-message.success { background-color: #dff0d8; color: #3c763d; }
+        .flash-message.error { background-color: #f2dede; color: #a94442; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-800 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Left side - Logo and main nav -->
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold">AI Knowledge Hub</a>
+                    <nav class="ml-8">
+                        <ul class="flex space-x-4">
+                            <li><a href="/" class="hover:text-blue-200 transition-colors">Home</a></li>
+                            <li><a href="/knowledge-base" class="hover:text-blue-200 transition-colors">Knowledge Base</a></li>
+                            <li><a href="/github-trending" class="hover:text-blue-200 transition-colors">GitHub Trending</a></li>
+                            <li><a href="/chat" class="hover:text-blue-200 transition-colors">AI Assistant</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Right side - Auth buttons -->
+                <div class="flex items-center space-x-4">
+                    
+                        <a href="/login" class="hover:text-blue-200 transition-colors">Login</a>
+                        <a href="/register" class="hover:text-blue-200 transition-colors">Register</a>
+                    
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        
+            
+        
+
+        
+<div class="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <h2 class="mt-6 mb-3 text-center text-3xl font-extrabold text-gray-900">
+                Create your account
+            </h2>
+        </div>
+        <form class="space-y-6" method="POST">
+            
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input id="username" name="username" type="text" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input id="email" name="email" type="email" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input id="password" name="password" type="password" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                    <input id="confirm_password" name="confirm_password" type="password" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button type="submit" 
+                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Register
+                </button>
+            </div>
+        </form>
+        
+        <div class="text-center">
+            <p class="text-sm text-gray-600">
+                Already have an account? 
+                <a href="/login" class="font-medium text-blue-600 hover:text-blue-500">
+                    Sign in here
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 AI Knowledge Hub</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userMenu = document.getElementById('userMenu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
